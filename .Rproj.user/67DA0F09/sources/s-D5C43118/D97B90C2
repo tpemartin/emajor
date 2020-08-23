@@ -1,0 +1,24 @@
+{
+    "id": "D97B90C2",
+    "path": "~/Github/emajor/.Rprofile",
+    "project_path": ".Rprofile",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1598188141328.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "cursorPosition": "10,1",
+        "scrollLine": "7"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1598188189,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1598188189153,
+    "read_only": false,
+    "read_only_alternatives": []
+}

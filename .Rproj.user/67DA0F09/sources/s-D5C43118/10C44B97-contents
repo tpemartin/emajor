@@ -1,0 +1,95 @@
+---
+title: "範例"
+output: html_document
+---
+
+```{r setup, include=FALSE, drake=F}
+knitr::opts_chunk$set(echo = TRUE)
+library(drake)
+library(purrr)
+library(econDV)
+purl_drakePlan(
+  filename="/Users/martin/Github/emajor/plan_example.Rmd",
+  plan_name="plan_example"
+)
+
+```
+
+## makecondition
+
+```{r makecondition}
+library(dplyr); library(stringr); library(ggplot2); library(plotly); library(lubridate); library(readr); library(tidyr); library(showtext);library(grid);library(readxl);library(gridExtra);
+library(reshape2)
+
+font_add_google("Noto Serif TC", "NSerifC") #google字體
+showtext_auto(enable=TRUE) #啟用字體
+
+```
+
+## data
+
+```{r Report}
+Report = read_excel(file_in("/Users/martin/Github/emajor/Report.xls"))
+```
+
+```{r deposit}
+deposit=
+{
+  Report%>%
+    gather(
+      中華民國,中國大陸,`日　本`,俄羅斯,`韓　國`,`美　國`,`德　國`,
+      key=國別,value=外匯存底
+    )%>%
+    filter(時間=="109年5月")->deposit
+  
+  deposit[order(-deposit$外匯存底),]->deposit
+  
+  deposit%>%
+    mutate(order=(as.character(1:7)))->deposit
+}
+
+```
+
+```{r indicator1}
+indicator1 = {
+  read_excel(file_in("/Users/martin/Github/emajor/indicator.xlsx")) -> indicator
+  indicator$年月 %>% ymd() ->indicator$年月
+  melt(indicator, id.vars = "年月")->indicator1 #long format
+  indicator1
+}
+
+```
+
+
+## graph
+
+```{r gg_taiwanEconomicGrowth}
+gg_taiwanEconomicGrowth = {
+  dataReady %>%
+    ggplot()+
+    geom_line(
+      aes(
+        x=年, y=`經濟成長(%)`
+      )
+    )
+}
+```
+
+```{r}
+gg_taiwanEconomicGrowth
+```
+
+## export
+
+```{r save_gg_taiwanEconomicGrowth}
+save_gg_taiwanEconomicGrowth = {
+  ggsave(
+    file_out("taiwanEconomicsGrowth.svg"),
+    gg_taiwanEconomicGrowth,
+    width=8,
+    height=5
+  )
+  
+}
+```
+

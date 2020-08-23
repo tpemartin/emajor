@@ -1,0 +1,318 @@
+---
+title: "E_Major_theme"
+author: "邱奕勳"
+date: "2020/7/4"
+output: html_document
+---
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE, message=F, warning=F)
+library(drake)
+purl_drakePlan(
+  filename=
+    file.path(
+      getwd(),
+      "emajor.Rmd"),
+  plan_name="plan_emajor"
+)
+
+
+```
+
+```{r makecondition}
+library(dplyr); library(stringr); library(ggplot2); library(plotly); library(lubridate); library(readr); library(tidyr); library(showtext);library(grid);library(readxl);library(gridExtra);
+library(reshape2); library(emajor)
+
+font_add_google("Noto Serif TC", "NSerifC") #google字體
+showtext_auto(enable=TRUE) #啟用字體
+```
+
+
+#exemple data
+
+```{r Report}
+Report = read_excel(file_in("/Users/martin/Github/emajor/Report.xls"))
+```
+
+```{r deposit}
+deposit=
+{
+  Report%>%
+    pivot_longer(
+      cols=`中華民國`:`德　國`,
+      names_to="國別",values_to="外匯存底"
+    )%>%
+    filter(時間=="109年5月")->deposit
+  
+  deposit[order(-deposit$外匯存底),]->deposit
+  
+  deposit%>%
+    mutate(order=(as.character(1:7)))->deposit
+}
+
+```
+
+```{r trash}
+trash = {
+  trash <- read_excel(file_in("/Users/martin/Github/emajor/trash.xlsx"))
+  trash$統計期 %>% ymd() -> trash$統計期
+  trash
+} 
+```
+
+```{r indicator1}
+indicator1 = {
+  read_excel(file_in("/Users/martin/Github/emajor/indicator.xlsx")) -> indicator
+  indicator$年月 %>% ymd() ->indicator$年月
+  melt(indicator, id.vars = "年月")->indicator1 #long format
+  indicator1
+}
+
+```
+#底圖需注意
+1. 設定y軸靠右
++scale_y_continuous(position = "right")
+
+2. 設定x,y,title, subtitle
++labs(x="",y="",title = "平均每人每日一般廢棄物產生量", subtitle = "單位：月")
+
+
+#baseplot
+##geom_line_without_legend
+```{r line_baseplot, message=F, warning=F}
+line_baseplot = {
+indicator%>%ggplot(aes(x=年月))+
+  geom_hline(yintercept = 100, color="black", linetype="longdash" , size =0.3)+ #標準線
+  geom_line(aes(y=領先指標),color="#1f78b4",size=1.5)+ #geom
+  geom_line(aes(y=同時指標),color="#33a02c",size=1.5)+
+  geom_line(aes(y=落後指標),color="#d95f02",size=1.5)+
+  labs(x="",y="",title = "景氣指標", subtitle = "單位：點")+ #兩標、title、subtitle為Y軸
+  scale_y_discrete(limits = c(97:103), position = "right")+
+  scale_x_date( #breaks
+      breaks = seq(as.Date("2019-05-01"), as.Date("2020-03-01"), by="2 month"),
+      labels = c("201905","07","09","11","202001","03")
+      )
+  }
+```
+
+```{r}
+line_baseplot
+```
+
+##geom_line_with_legend
+```{r line_legend_baseplot, message=F, warning=F}
+line_legend_baseplot = {
+  indicator1%>%ggplot(aes(x=indicator1$年月,y=indicator1$value,color=indicator1$variable))+
+  geom_hline(yintercept = 100, color="black", linetype="longdash" , size =0.3)+ #標準線
+  geom_line(size=1.5)+
+  scale_color_manual(values = c("#1f78b4","#33a02c","#d95f02"))+
+  labs(x="",y="",title = "景氣指標", subtitle = "單位：點")+ #兩標、title
+  scale_y_discrete(limits = c(97:103), position = "right")+
+  scale_x_date( #breaks
+      breaks = seq(as.Date("2019-05-01"), as.Date("2020-03-01"), by="2 month"),
+      labels = c("201905","07","09","11","202001","03")
+      )
+}
+```
+
+```{r}
+line_legend_baseplot
+```
+
+## geom_col
+```{r col_baseplot, message=F, warning=F}
+col_baseplot = {
+  deposit%>%
+  ggplot()+
+  geom_col(
+    aes(x=order,y=外匯存底),
+    width = 0.5,fill="#1f78b4"
+  )+
+  labs(x="",y="",title = "主要國家於2020年5月的外匯存底", subtitle = "單位：億美元")+
+  scale_y_continuous(position = "right")+
+  scale_x_discrete(labels=deposit$國別)
+
+}
+```
+
+```{r}
+col_baseplot
+```
+
+
+##geom_point
+```{r point_baseplot, message=F, warning=F}
+point_baseplot = {
+  trash %>% ggplot(
+  aes(x=trash$統計期, y= trash$`平均每人每日一般廢棄物產生量 (公斤)`, color=trash$統計區)
+  )+
+  geom_smooth(size = 0.6, alpha = 0.2)+
+  geom_point(size=0.7)+
+  scale_y_continuous(position = "right")+ #y 軸靠右
+  labs(x="",y="",title = "平均每人每日一般廢棄物產生量", subtitle = "單位：公斤")+
+  scale_x_date( #breaks
+      breaks = c(as.Date("2001-01-01") ,seq(as.Date("2005-01-01"), as.Date("2020-01-01"), by="5 year")),
+      labels = c("200101","200501","201001","201501","202001")
+      )  #兩標、title、subtitle為Y軸
+}
+```
+
+```{r}
+point_baseplot
+```
+
+
+#emajor_theme
+
+  * `emajor_theme(baseplot, bar_col)`
+
+Arguments:
+  * baseplot:底圖(ggplot 物件)  
+  * bar_col: 是否為geom_bar 或 geom_col物件，是則1;否則0
+
+
+##geom_line_without_legend
+```{r line_baseplot_m, message=F, warning=F}
+line_baseplot_m ={
+  emajor_theme(line_baseplot,0)
+}
+
+```
+
+##geom_line_with_legend
+```{r, message=F, warning=F}
+emajor_theme(line_legend_baseplot,0)
+```
+
+
+##geom_col
+```{r, message=F, warning=F}
+emajor_theme(col_baseplot,1)
+```
+
+
+##geom_point
+```{r, message=F, warning=F}
+emajor_theme(point_baseplot,0)
+```
+
+
+#grid
+
+##grid_function
+###single_plot
+```{r}
+emajor_grid_single <- function(modifiedPlot, sources, png_filename){
+  ggplotGrob(modifiedPlot) -> grobPlot
+  
+  theme_tag <- rectGrob( #top left rect
+    x = 0, y = 0.995, width = 0.02,just = c("left","top"), 
+    height = 0.05, gp = gpar(fill="#E74C3C", col = "red"))
+
+  theme_line <-rectGrob( #top line
+    x = 0, y = 0.995, width = 1,just = c("left","top"), 
+    height = 0.003, gp = gpar( fill = "#E74C3C", col = "red"))
+
+  source_text <- textGrob( #bottom sources
+    sources, x = 0.05,y=0.03 ,just = "left", #relative to x,y location
+    gp = gpar(fontface = 3L, fontsize = 9, col="#7c8290")
+    )
+
+  emajor_text <- textGrob( #bottom-right emajor tag
+    "E.Major", x = 0.95,y=0.03 ,
+    gp = gpar(fontface = "bold", fontsize = 10, col="#E74C3C", alpha = 0.5, fontfamily = "NSerifC")
+    )
+  
+  grid.newpage() #show 
+  grid.draw(modifiedPlot)
+  grid.draw(theme_tag)
+  grid.draw(theme_line)
+  grid.draw(source_text)
+  grid.draw(emajor_text)
+  
+  png(png_filename, width = 480, height = 480) #save to png
+  grid.newpage()
+  grid.draw(modifiedPlot)
+  grid.draw(theme_tag)
+  grid.draw(theme_line)
+  grid.draw(source_text)
+  grid.draw(emajor_text)
+  dev.off()
+  
+}
+
+```
+
+###composite_plot
+```{r}
+emajor_grid_composite <- function(modifiedPlot1,modifiedPlot2, sources, png_filename){
+  #ggplot to Grob object
+  ggplotGrob(modifiedPlot1) -> grobPlot1
+  ggplotGrob(modifiedPlot2) -> grobPlot2
+  
+  #Grob element
+  theme_tag <- rectGrob( #top left rect
+    x = 0, y = 0.995, width = 0.02,just = c("left","top"), 
+    height = 0.05, gp = gpar(fill="#E74C3C", col = "red"))
+  theme_line <-rectGrob( #top line
+    x = 0, y = 0.995, width = 1,just = c("left","top"), 
+    height = 0.003, gp = gpar( fill = "#E74C3C", col = "red"))
+  source_text <- textGrob( #bottom sources
+    sources, x = 0.03,y=0.03 ,just = "left", #relative to x,y location
+    gp = gpar(fontface = 3L, fontsize = 9, col="#7c8290")
+    )
+  emajor_text <- textGrob( #bottom-right emajor tag
+    "E.Major", x = 0.95,y=0.03 ,
+    gp = gpar(fontface = "bold", fontsize = 10, col="#E74C3C", alpha = 0.5, fontfamily = "NSerifC")
+    )
+  
+  #show
+  grid.newpage() 
+  grid.arrange(grobPlot1, grobPlot2,ncol=2)
+  grid.draw(theme_tag)
+  grid.draw(theme_line)
+  grid.draw(source_text)
+  grid.draw(emajor_text)
+  
+  #save to png
+  png(png_filename, width = 800, height = 400) 
+  grid.newpage()
+  grid.arrange(grobPlot1, grobPlot2,ncol=2)
+  grid.draw(theme_tag)
+  grid.draw(theme_line)
+  grid.draw(source_text)
+  grid.draw(emajor_text)
+  dev.off()
+  
+}
+
+```
+
+
+##single
+###geom_line_without_legend
+```{r}
+emajor_grid_single(line_baseplot_m, "sources:國發會景氣指標查詢系統", "picture/line.png")
+```
+###geom_line_with_legend
+```{r}
+emajor_grid_single(line_legend_baseplot_m, "sources:國發會景氣指標查詢系統", "picture/line_legend.png")
+```
+###geom_col
+```{r}
+emajor_grid_single(col_baseplot_m, "sources:sources:國發會景氣指標查詢系統", "picture/col.png")
+```
+###geom_point
+```{r}
+emajor_grid_single(point_baseplot_m, "sources:政府資料開放平台" ,"picture/point.png")
+```
+
+##composite
+```{r}
+emajor_grid_composite(line_baseplot_m, col_baseplot_m,"sources:國發會景氣指標查詢系統", "picture/line_col.png")
+```
+
+
+
+
+

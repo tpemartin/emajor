@@ -1,0 +1,26 @@
+{
+    "id": "7978AF5E",
+    "path": "~/Github/emajor/Rmd/emajor.Rmd",
+    "project_path": "Rmd/emajor.Rmd",
+    "type": "r_markdown",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1598188620636.0,
+    "source_on_save": false,
+    "relative_order": 3,
+    "properties": {
+        "cursorPosition": "18,0",
+        "scrollLine": "16",
+        "docOutlineVisible": "1",
+        "last_setup_crc32": ""
+    },
+    "folds": "204|68|241|0|\n246|6|288|0|\n247|86|286|0|\n",
+    "lastKnownWriteTime": 1598192060,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1598192069290,
+    "read_only": false,
+    "read_only_alternatives": []
+}

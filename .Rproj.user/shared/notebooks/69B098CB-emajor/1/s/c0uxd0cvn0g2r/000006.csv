@@ -1,0 +1,5 @@
+"0","trash = {"
+"0","  trash <- read_excel(file_in(""/Users/martin/Github/emajor/trash.xlsx""))"
+"0","  trash$統計期 %>% ymd() -> trash$統計期"
+"0","  trash"
+"0","} "
