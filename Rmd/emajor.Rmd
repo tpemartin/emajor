@@ -5,7 +5,7 @@ date: "2020/7/4"
 output: html_document
 ---
 
-```{r setup}
+```{r setup, drake=F}
 knitr::opts_chunk$set(echo = TRUE, message=F, warning=F)
 library(drake)
 purl_drakePlan(
@@ -16,6 +16,9 @@ purl_drakePlan(
   plan_name="plan_emajor"
 )
 
+downloader::download("https://www.dropbox.com/s/umlq3k6h5uao1fp/indicator.xlsx?dl=1", destfile=file.path(getwd(),"indicator.xlsx"))
+downloader::download("https://www.dropbox.com/s/klb9rtzr35gfqcz/Report.xls?dl=1", destfile=file.path(getwd(),"Report.xls"))
+downloader::download("https://www.dropbox.com/s/fpwrq6cnk3skql9/trash.xlsx?dl=1", destfile=file.path(getwd(),"trash.xlsx"))
 
 ```
 
@@ -60,10 +63,16 @@ trash = {
 } 
 ```
 
-```{r indicator1}
-indicator1 = {
+```{r indicator}
+indicator ={
   read_excel(file_in("/Users/martin/Github/emajor/indicator.xlsx")) -> indicator
   indicator$年月 %>% ymd() ->indicator$年月
+  indicator
+}
+```
+
+```{r indicator1}
+indicator1 = {
   melt(indicator, id.vars = "年月")->indicator1 #long format
   indicator1
 }

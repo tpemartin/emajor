@@ -1,4 +1,66 @@
-#' Title
+#' Theme for geom_col
+#'
+#' @return
+#' @export
+#'
+#' @examples ggplot(data=myData)+geom_col(aes(x=x,y=y))+emajor_themeCol()
+emajor_themeCol <- function(){
+  theme(
+    axis.text.x = element_text(size = 11),
+    plot.background = element_rect(colour = "white"),
+    plot.margin = margin(30,0,20,20), #margin?
+    plot.title = element_text(size = 16, face = 2),
+    plot.subtitle = element_text(size = 12, color = "#565b64"),
+    panel.background = element_blank(),
+    panel.grid.major.y = element_line(color = "gray", size = 0.2),
+    panel.grid.major.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.line.y = element_blank(),
+    axis.line.x = element_line(color = "black"),
+    axis.ticks.length = unit(5,"pt"),
+    axis.text.y = element_text(size = 13),
+    legend.position = "top",
+    legend.title = element_blank(),
+    legend.text.align = 1,
+    legend.spacing.x = unit(0.3, "cm"),
+    legend.margin=margin(b = -0.2, unit='cm'),
+    legend.key = element_blank(),
+    text = element_text(family = "NSerifC") #在grid 使用此字體會有error
+  )
+}
+
+#' Theme for geom_bar
+#'
+#' @return
+#' @export
+#'
+#' @examples ggplot(data=myData)+geom_bar(aes(x=x))+emajor_themeBar()
+emajor_themeBar <- function(){
+  theme(
+    axis.text.x = element_text(hjust = -0.1, vjust = -0.5, size = 11),
+    plot.background = element_rect(colour = "white"),
+    plot.margin = margin(30,0,20,20), #margin?
+    plot.title = element_text(size = 16, face = 2),
+    plot.subtitle = element_text(size = 12, color = "#565b64"),
+    panel.background = element_blank(),
+    panel.grid.major.y = element_line(color = "gray", size = 0.2),
+    panel.grid.major.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.line.y = element_blank(),
+    axis.line.x = element_line(color = "black"),
+    axis.ticks.length = unit(5,"pt"),
+    axis.text.y = element_text(size = 13),
+    legend.position = "top",
+    legend.title = element_blank(),
+    legend.text.align = 1,
+    legend.spacing.x = unit(0.3, "cm"),
+    legend.margin=margin(b = -0.2, unit='cm'),
+    legend.key = element_blank(),
+    text = element_text(family = "NSerifC") #在grid 使用此字體會有error
+  )
+}
+
+#' emajor_theme
 #'
 #' @param baseplot A list, 底圖(ggplot 物件)
 #' @param bar_col An integer. 是否為geom_bar 或 geom_col物件，是則1;否則0

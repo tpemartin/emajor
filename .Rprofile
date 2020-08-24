@@ -7,7 +7,7 @@ source("renv/activate.R")
   "tidyr", "showtext", "rprojroot", "fst", "magrittr",
   "xml2", "rvest", "rdbnomics", "dplyr", "magick",
   "sf", "osmdata", "grDevices", "colorspace",
-  "shinyjs", "devtools", "clipr", "googlesheets4"
+  "shinyjs", "devtools", "clipr", "googlesheets4",'styler'
 )
 invisible(purrr::map(
   .packages_init,

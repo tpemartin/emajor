@@ -1,17 +1,6 @@
 # plan_emajor------------
 plan_emajor=drake::drake_plan(
 # > plan begins -----------
-# >> setup--------------
-knitr::opts_chunk$set(echo = TRUE, message=F, warning=F)
-library(drake)
-purl_drakePlan(
-  filename=
-    file.path(
-      getwd(),
-      "emajor.Rmd"),
-  plan_name="plan_emajor"
-),
-
 # >> Report--------------
 Report=read_excel(file_in("/Users/martin/Github/emajor/Report.xls")),
 
@@ -38,10 +27,15 @@ trash = {
   trash
 },
 
-# >> indicator1--------------
-indicator1 = {
+# >> indicator--------------
+indicator ={
   read_excel(file_in("/Users/martin/Github/emajor/indicator.xlsx")) -> indicator
   indicator$年月 %>% ymd() ->indicator$年月
+  indicator
+},
+
+# >> indicator1--------------
+indicator1 = {
   melt(indicator, id.vars = "年月")->indicator1 #long format
   indicator1
 },
