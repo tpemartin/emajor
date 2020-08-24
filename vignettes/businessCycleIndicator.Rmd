@@ -1,0 +1,65 @@
+---
+title: "景氣指標"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{景氣指標}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, message=FALSE, warning = FALSE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(emajor)
+```
+
+## 景氣指標：無legend
+
+```{r message=FALSE, warning=FALSE}
+indicator %>% ggplot(aes(x = 年月)) +
+  geom_hline(yintercept = 100, color = "black", linetype = "longdash", size = 0.3) + # 標準線
+  geom_line(aes(y = 領先指標), color = "#1f78b4", size = 1.5) + # geom
+  geom_line(aes(y = 同時指標), color = "#33a02c", size = 1.5) +
+  geom_line(aes(y = 落後指標), color = "#d95f02", size = 1.5) +
+  labs(x = "", y = "", title = "景氣指標", subtitle = "單位：點") + # 兩標、title、subtitle為Y軸
+  scale_y_discrete(limits = c(97:103), position = "right") +
+  scale_x_date( # breaks
+    breaks = seq(as.Date("2019-05-01"), as.Date("2020-03-01"), by = "2 month"),
+    labels = c("201905", "07", "09", "11", "202001", "03")
+  ) -> line_baseplot
+
+line_baseplot
+```
+
+
+```{r fig.showtext=TRUE, message=FALSE, warning=FALSE}
+line_baseplot + emajor_themeCol()
+```
+
+## 景氣指標：有legend
+
+```{r}
+melt(indicator, id.vars = "年月")->indicator_long #long format
+  indicator_long%>%ggplot(aes(x=indicator_long$年月,y=indicator_long$value,color=indicator_long$variable))+
+  geom_hline(yintercept = 100, color="black", linetype="longdash" , size =0.3)+ #標準線
+  geom_line(size=1.5)+
+  scale_color_manual(values = c("#1f78b4","#33a02c","#d95f02"))+
+  labs(x="",y="",title = "景氣指標", subtitle = "單位：點")+ #兩標、title
+  scale_y_discrete(limits = c(97:103), position = "right")+
+  scale_x_date( #breaks
+      breaks = seq(as.Date("2019-05-01"), as.Date("2020-03-01"), by="2 month"),
+      labels = c("201905","07","09","11","202001","03")
+      ) -> line_legend_baseplot
+
+line_legend_baseplot
+```
+
+```{r message=FALSE, warning=FALSE}
+line_legend_baseplot + emajor_themeCol()
+```
+

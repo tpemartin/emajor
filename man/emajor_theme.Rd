@@ -2,7 +2,7 @@
 % Please edit documentation in R/theme.R
 \name{emajor_theme}
 \alias{emajor_theme}
-\title{Title}
+\title{emajor_theme}
 \usage{
 emajor_theme(baseplot, bar_col)
 }
@@ -15,5 +15,5 @@ emajor_theme(baseplot, bar_col)
 
 }
 \description{
-Title
+emajor_theme
 }
