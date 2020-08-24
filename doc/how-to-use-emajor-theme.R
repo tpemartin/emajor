@@ -1,27 +1,13 @@
----
-title: "How to use EMajor theme"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{How to use EMajor theme}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
-
-```{r, include = FALSE}
+## ---- include = FALSE---------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-```
 
-## 安裝
+## ---- eval=F------------------------------------------------------------------
+#  remotes::install_github("tpemartin/emajor")
 
-```{r, eval=F}
-remotes::install_github("tpemartin/emajor")
-```
-
-
-```{r setup}
+## ----setup--------------------------------------------------------------------
 library(emajor)
 
 library(dplyr); library(stringr); library(ggplot2); library(plotly); library(lubridate); library(readr); library(tidyr); library(showtext);library(grid);library(readxl);library(gridExtra); library(reshape2)
@@ -29,11 +15,8 @@ library(dplyr); library(stringr); library(ggplot2); library(plotly); library(lub
 font_add_google("Noto Serif TC", "NSerifC") #google字體
 showtext_auto(enable=TRUE) #啟用字體
 data("indicator")
-```
 
-## 景氣指標：無legend
-
-```{r message=FALSE, warning=FALSE}
+## ----message=FALSE, warning=FALSE---------------------------------------------
 indicator %>% ggplot(aes(x = 年月)) +
   geom_hline(yintercept = 100, color = "black", linetype = "longdash", size = 0.3) + # 標準線
   geom_line(aes(y = 領先指標), color = "#1f78b4", size = 1.5) + # geom
@@ -47,16 +30,11 @@ indicator %>% ggplot(aes(x = 年月)) +
   ) -> line_baseplot
 
 line_baseplot
-```
 
-
-```{r fig.showtext=TRUE, message=FALSE, warning=FALSE}
+## ----fig.showtext=TRUE, message=FALSE, warning=FALSE--------------------------
 line_baseplot + emajor_themeCol()
-```
 
-## 景氣指標：有legend
-
-```{r}
+## -----------------------------------------------------------------------------
 melt(indicator, id.vars = "年月") -> indicator_long # long format
 indicator_long %>% 
   ggplot(aes(x = 年月, y = value, color = variable)) +
@@ -71,16 +49,11 @@ indicator_long %>%
   ) -> line_legend_baseplot
 
 line_legend_baseplot
-```
 
-
-```{r message=FALSE, warning=FALSE}
+## ----message=FALSE, warning=FALSE---------------------------------------------
 # line_legend_baseplot + emajor_themeCol()
-```
 
-## 每人廢棄物
-
-```{r message=FALSE, warning=FALSE}
+## ----message=FALSE, warning=FALSE---------------------------------------------
 point_baseplot <- {
   trash %>%
     ggplot(
@@ -97,9 +70,7 @@ point_baseplot <- {
 }
 
 point_baseplot
-```
 
-```{r}
+## -----------------------------------------------------------------------------
 point_baseplot + emajor_themeCol()
-```
 
